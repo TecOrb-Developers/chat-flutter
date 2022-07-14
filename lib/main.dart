@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:new_project/screens/onboarding_screen_1.dart';
 import 'package:new_project/screens/splash_screen.dart';

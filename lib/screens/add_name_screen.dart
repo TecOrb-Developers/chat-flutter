@@ -8,7 +8,7 @@ class AddNameScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: primaryColor,
+      backgroundColor: PRIMARY_COLOR,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -89,7 +89,7 @@ class AddNameScreen extends StatelessWidget {
                 child: const Text(
                   "Continue",
                   style: TextStyle(
-                    color: primaryColor,
+                    color: PRIMARY_COLOR,
                     fontSize: 21,
                   ),
                 ),

@@ -21,7 +21,7 @@ class LoginScreen extends StatelessWidget {
               },
               icon: const Icon(
                 Icons.arrow_back_rounded,
-                color: primaryColor,
+                color: PRIMARY_COLOR,
                 size: 28,
               ),
             ),
@@ -38,7 +38,7 @@ class LoginScreen extends StatelessWidget {
               ),
               const SizedBox(height: 30),
               const CircleAvatar(
-                backgroundColor: primaryColor,
+                backgroundColor: PRIMARY_COLOR,
                 backgroundImage: AssetImage("assets/images/avatar.png"),
                 maxRadius: 50,
                 // child: Image.asset("assets/images/avatar.png"),
