@@ -1,19 +1,70 @@
 import 'package:flutter/material.dart';
 import 'package:new_project/constants.dart';
 import 'package:new_project/screens/user_location_screen.dart';
+import 'package:new_project/utils/firebase_auth_util.dart';
+import 'package:provider/provider.dart';
 
 class MapsScreen extends StatelessWidget {
-  const MapsScreen({Key? key}) : super(key: key);
+  MapsScreen({Key? key}) : super(key: key);
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey,
+      key: _scaffoldKey,
+      backgroundColor: Colors.white,
+      drawer: Drawer(
+        backgroundColor: primaryColor,
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: const [
+                    CircleAvatar(
+                      backgroundColor: Colors.indigo,
+                      radius: 32,
+                    ),
+                    Icon(
+                      Icons.settings,
+                      color: hintTextColor,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 30),
+                ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+                  style: ListTileStyle.drawer,
+                  leading: const Icon(
+                    Icons.logout_rounded,
+                    color: hintTextColor,
+                  ),
+                  title: const Text(
+                    "Logout",
+                    style: TextStyle(color: tileTextColor, fontSize: 16),
+                  ),
+                  onTap: () async {
+                    await context.read<FirebaseAuthUtil>().signOut();
+                  },
+                  trailing: const Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    color: hintTextColor,
+                    size: 17,
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
       body: Stack(
         children: [
           LayoutBuilder(builder: (context, constraints) {
             return Container(
-              height: constraints.maxHeight / 1.8,
+              height: constraints.maxHeight / 1.6,
               color: Colors.red,
             );
           }),
@@ -23,16 +74,21 @@ class MapsScreen extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Container(
-                  padding: const EdgeInsets.all(6),
-                  decoration: const BoxDecoration(
-                    color: PRIMARY_COLOR,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.menu,
-                    color: Colors.white,
-                    size: 22,
+                GestureDetector(
+                  onTap: () {
+                    _scaffoldKey.currentState!.openDrawer();
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: const BoxDecoration(
+                      color: primaryColor,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.menu,
+                      color: Colors.white,
+                      size: 22,
+                    ),
                   ),
                 ),
                 Expanded(
@@ -55,7 +111,7 @@ class MapsScreen extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(6),
                   decoration: const BoxDecoration(
-                    color: PRIMARY_COLOR,
+                    color: primaryColor,
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
@@ -68,11 +124,11 @@ class MapsScreen extends StatelessWidget {
             ),
           )),
           DraggableScrollableSheet(
-            initialChildSize: 0.5,
-            minChildSize: 0.5,
+            initialChildSize: 0.4,
+            minChildSize: 0.4,
             maxChildSize: 0.9,
             snap: true,
-            snapSizes: const [0.5, 0.9],
+            snapSizes: const [0.4, 0.9],
             builder: ((context, scrollController) {
               return Container(
                 decoration: const BoxDecoration(
@@ -107,7 +163,7 @@ class MapsScreen extends StatelessWidget {
                                   contentPadding: const EdgeInsets.symmetric(
                                       horizontal: 20),
                                   leading: const CircleAvatar(
-                                      backgroundColor: PRIMARY_COLOR),
+                                      backgroundColor: primaryColor),
                                   title: const Text("Test User Name"),
                                   subtitle: const Text("at Tecorb since 10.32"),
                                   onTap: () {
@@ -144,7 +200,7 @@ class MapsScreen extends StatelessWidget {
               width: double.maxFinite,
               alignment: Alignment.center,
               decoration: const ShapeDecoration(
-                color: PRIMARY_COLOR,
+                color: primaryColor,
                 shape: StadiumBorder(),
               ),
               child: const Text(

@@ -8,10 +8,10 @@ class AddPhotoScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: PRIMARY_COLOR,
+      backgroundColor: primaryColor,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: PRIMARY_COLOR,
+        backgroundColor: primaryColor,
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
@@ -70,13 +70,13 @@ class AddPhotoScreen extends StatelessWidget {
                       Icon(
                         Icons.camera_alt_sharp,
                         size: 19,
-                        color: PRIMARY_COLOR,
+                        color: primaryColor,
                       ),
                       SizedBox(width: 10),
                       Text(
                         "Add your photo",
                         style: TextStyle(
-                          color: PRIMARY_COLOR,
+                          color: primaryColor,
                           fontSize: 18,
                         ),
                       ),
@@ -108,7 +108,7 @@ class AddPhotoScreen extends StatelessWidget {
                 child: const Text(
                   "Continue",
                   style: TextStyle(
-                    color: PRIMARY_COLOR,
+                    color: primaryColor,
                     fontSize: 18,
                   ),
                 ),

@@ -8,10 +8,10 @@ class ShareLocationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: PRIMARY_COLOR,
+      backgroundColor: primaryColor,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: PRIMARY_COLOR,
+        backgroundColor: primaryColor,
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
@@ -50,7 +50,7 @@ class ShareLocationScreen extends StatelessWidget {
           GestureDetector(
             onTap: () {
               Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const MapsScreen()),
+                MaterialPageRoute(builder: (_) => MapsScreen()),
               );
             },
             child: Container(
@@ -68,7 +68,7 @@ class ShareLocationScreen extends StatelessWidget {
               child: const Text(
                 "Continue",
                 style: TextStyle(
-                  color: PRIMARY_COLOR,
+                  color: primaryColor,
                   fontSize: 18,
                 ),
               ),

@@ -17,7 +17,7 @@ class ChatScreen extends StatelessWidget {
           },
           icon: const Icon(
             Icons.arrow_back_rounded,
-            color: PRIMARY_COLOR,
+            color: primaryColor,
           ),
         ),
         title: const Text(
@@ -29,7 +29,7 @@ class ChatScreen extends StatelessWidget {
               onPressed: () {},
               icon: const Icon(
                 Icons.call,
-                color: PRIMARY_COLOR,
+                color: primaryColor,
               ))
         ],
       ),
@@ -56,7 +56,7 @@ class ChatScreen extends StatelessWidget {
                         color: Colors.black,
                         fontSize: 16,
                       ),
-                      cursorColor: PRIMARY_COLOR,
+                      cursorColor: primaryColor,
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: "Type your message...",

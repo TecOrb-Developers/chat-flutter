@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:new_project/constants.dart';
-import 'package:new_project/screens/add_name_screen.dart';
+import 'package:new_project/utils/firebase_auth_util.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -21,7 +22,7 @@ class LoginScreen extends StatelessWidget {
               },
               icon: const Icon(
                 Icons.arrow_back_rounded,
-                color: PRIMARY_COLOR,
+                color: primaryColor,
                 size: 28,
               ),
             ),
@@ -38,7 +39,7 @@ class LoginScreen extends StatelessWidget {
               ),
               const SizedBox(height: 30),
               const CircleAvatar(
-                backgroundColor: PRIMARY_COLOR,
+                backgroundColor: primaryColor,
                 backgroundImage: AssetImage("assets/images/avatar.png"),
                 maxRadius: 50,
                 // child: Image.asset("assets/images/avatar.png"),
@@ -67,10 +68,10 @@ class LoginScreen extends StatelessWidget {
                     children: [
                       Expanded(
                         child: GestureDetector(
-                          onTap: () => Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (_) => const AddNameScreen()),
-                          ),
+                          onTap: () {
+                            print("fb login");
+                            context.read<FirebaseAuthUtil>().signInWithFb();
+                          },
                           child: Container(
                             margin: const EdgeInsets.only(right: 1),
                             height: 130,
@@ -109,7 +110,10 @@ class LoginScreen extends StatelessWidget {
                       ),
                       Expanded(
                         child: GestureDetector(
-                          onTap: () => print("google login"),
+                          onTap: () {
+                            print("google login");
+                            context.read<FirebaseAuthUtil>().signInWithGoogle();
+                          },
                           child: Container(
                             margin: const EdgeInsets.only(left: 1),
                             height: 130,

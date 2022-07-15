@@ -97,7 +97,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           width: double.maxFinite,
                           alignment: Alignment.center,
                           decoration: const ShapeDecoration(
-                            color: PRIMARY_COLOR,
+                            color: primaryColor,
                             shape: StadiumBorder(),
                           ),
                           child: const Text(

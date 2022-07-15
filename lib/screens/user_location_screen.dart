@@ -9,7 +9,7 @@ class UserLocationScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
-      backgroundColor: Colors.amber,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -19,7 +19,7 @@ class UserLocationScreen extends StatelessWidget {
           },
           icon: const Icon(
             Icons.arrow_back_rounded,
-            color: PRIMARY_COLOR,
+            color: primaryColor,
           ),
         ),
         title: Column(
@@ -61,7 +61,7 @@ class UserLocationScreen extends StatelessWidget {
                   const Spacer(),
                   ListTile(
                     contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-                    leading: const CircleAvatar(backgroundColor: PRIMARY_COLOR),
+                    leading: const CircleAvatar(backgroundColor: primaryColor),
                     title: const Text("Test User Name"),
                     subtitle: const Text("at Tecorb since 10:15"),
                     trailing: IconButton(
@@ -72,7 +72,7 @@ class UserLocationScreen extends StatelessWidget {
                       },
                       icon: const Icon(
                         Icons.message,
-                        color: PRIMARY_COLOR,
+                        color: primaryColor,
                       ),
                     ),
                   ),

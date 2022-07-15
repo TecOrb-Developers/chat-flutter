@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <string name="app_name">location-chat-flutter</string>
+    <string name="facebook_app_id">3053470718203957</string>
+    <string name="fb_login_protocol_scheme">fb3053470718203957</string>
+    <string name="facebook_client_token">da15ee59731cc9592c3349cc16b16656</string>
+</resources>
