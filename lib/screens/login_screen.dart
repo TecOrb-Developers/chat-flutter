@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:new_project/constants.dart';
+import 'package:new_project/screens/add_name_screen.dart';
+import 'package:new_project/screens/share_location_screen.dart';
 import 'package:new_project/utils/firebase_auth_util.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -110,9 +113,36 @@ class LoginScreen extends StatelessWidget {
                       ),
                       Expanded(
                         child: GestureDetector(
-                          onTap: () {
+                          onTap: () async {
                             print("google login");
-                            context.read<FirebaseAuthUtil>().signInWithGoogle();
+                            await context
+                                .read<FirebaseAuthUtil>()
+                                .signInWithGoogle();
+
+                            final SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
+
+                            String email = prefs.getString(emailKey) ?? "";
+                            String name = prefs.getString(nameKey) ?? "";
+                            String photo = prefs.getString(photoKey) ?? "";
+
+                            if (name.isEmpty) {
+                              Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                    builder: (_) => const AddNameScreen()),
+                              );
+                            } else if (photo.isEmpty) {
+                              Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                    builder: (_) => const AddNameScreen()),
+                              );
+                            } else {
+                              Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                    builder: (_) =>
+                                        const ShareLocationScreen()),
+                              );
+                            }
                           },
                           child: Container(
                             margin: const EdgeInsets.only(left: 1),
