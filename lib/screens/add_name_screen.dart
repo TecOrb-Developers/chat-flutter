@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:new_project/constants.dart';
 import 'package:new_project/screens/add_photo_screen.dart';
+import 'package:new_project/screens/share_location_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AddNameScreen extends StatelessWidget {
-  const AddNameScreen({Key? key}) : super(key: key);
+  AddNameScreen({Key? key}) : super(key: key);
+
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -39,28 +44,30 @@ class AddNameScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 40),
-            const TextField(
+            TextField(
+              controller: _firstNameController,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 color: yellowBtnColor,
                 fontSize: 22,
               ),
               cursorColor: yellowBtnColor,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 border: InputBorder.none,
                 hintText: "First Name",
                 hintStyle: TextStyle(color: hintTextColor),
               ),
             ),
             const SizedBox(height: 20),
-            const TextField(
+            TextField(
+              controller: _lastNameController,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 color: yellowBtnColor,
                 fontSize: 22,
               ),
               cursorColor: yellowBtnColor,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 border: InputBorder.none,
                 hintText: "Last Name",
                 hintStyle: TextStyle(color: hintTextColor),
@@ -68,10 +75,24 @@ class AddNameScreen extends StatelessWidget {
             ),
             const Spacer(),
             GestureDetector(
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const AddPhotoScreen()),
-                );
+              onTap: () async {
+                final SharedPreferences prefs =
+                    await SharedPreferences.getInstance();
+
+                await prefs.setString(nameKey,
+                    "${_firstNameController.text.trim()} ${_lastNameController.text.trim()}");
+
+                if (prefs.getString(photoKey) != null ||
+                    prefs.getString(photoKey)!.isNotEmpty) {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                        builder: (_) => const ShareLocationScreen()),
+                  );
+                } else {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const AddPhotoScreen()),
+                  );
+                }
               },
               child: Container(
                 height: 50,

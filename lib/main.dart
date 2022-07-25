@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -8,21 +9,31 @@ import 'package:new_project/screens/share_location_screen.dart';
 import 'package:new_project/screens/splash_screen.dart';
 import 'package:new_project/utils/firebase_auth_util.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(const MyApp());
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  runApp(MyApp(prefs: prefs));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  MyApp({Key? key, required this.prefs}) : super(key: key);
+
+  final SharedPreferences prefs;
+  final FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        Provider(create: (_) => FirebaseAuthUtil(FirebaseAuth.instance)),
+        Provider(
+            create: (_) => FirebaseAuthUtil(
+                  auth: FirebaseAuth.instance,
+                  firebaseFirestore: firebaseFirestore,
+                  prefs: prefs,
+                )),
         // StreamProvider(
         //   create: (_) => context.read<FirebaseAuthUtil>().authState,
         //   initialData: null,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:new_project/constants.dart';
 import 'package:new_project/screens/share_location_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AddPhotoScreen extends StatelessWidget {
   const AddPhotoScreen({Key? key}) : super(key: key);
@@ -12,15 +13,15 @@ class AddPhotoScreen extends StatelessWidget {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: primaryColor,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: const Icon(
-            Icons.arrow_back_rounded,
-            size: 28,
-          ),
-        ),
+        // leading: IconButton(
+        //   onPressed: () {
+        //     Navigator.pop(context);
+        //   },
+        //   icon: const Icon(
+        //     Icons.arrow_back_rounded,
+        //     size: 28,
+        //   ),
+        // ),
       ),
       body: SafeArea(
         child: Column(
@@ -87,10 +88,15 @@ class AddPhotoScreen extends StatelessWidget {
             ),
             const Spacer(flex: 20),
             GestureDetector(
-              onTap: () {
-                Navigator.of(context).push(
+              onTap: () async {
+                final prefs = await SharedPreferences.getInstance();
+
+                await prefs.setString(photoKey, "");
+
+                Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(
                       builder: (_) => const ShareLocationScreen()),
+                  (route) => false,
                 );
               },
               child: Container(

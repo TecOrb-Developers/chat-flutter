@@ -1,37 +1,49 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
-
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:new_project/constants.dart';
+import 'package:new_project/model/user_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FirebaseAuthUtil {
-  final FirebaseAuth _auth;
+  final FirebaseAuth auth;
+  final FirebaseFirestore firebaseFirestore;
+  final SharedPreferences prefs;
 
-  FirebaseAuthUtil(this._auth);
+  FirebaseAuthUtil({
+    required this.auth,
+    required this.firebaseFirestore,
+    required this.prefs,
+  });
 
-  Stream<User?> get authState => _auth.authStateChanges();
+  Stream<User?> get authState => auth.authStateChanges();
+
+  UserModel? _userModel;
+
+  UserModel? get userModel => _userModel;
+
+  User? get currentUser => auth.currentUser;
 
   //LOGIN WITH FACEBOOK
   Future<void> signInWithFb() async {
     try {
       // await signOut();
 
-      final LoginResult loginResult = await FacebookAuth.instance.login();
+      // final LoginResult loginResult = await FacebookAuth.instance.login();
 
-      print("FB LOGIN RESULT STATUS: ${loginResult.status}");
-      print("FB LOGIN RESULT MESSAGE: ${loginResult.message}");
+      // print("FB LOGIN RESULT STATUS: ${loginResult.status}");
+      // print("FB LOGIN RESULT MESSAGE: ${loginResult.message}");
 
       // if (loginResult.accessToken?.token != null) {
-      final OAuthCredential fbAuthCred =
-          FacebookAuthProvider.credential(loginResult.accessToken!.token);
+      // final OAuthCredential fbAuthCred =
+      //     FacebookAuthProvider.credential(loginResult.accessToken!.token);
 
-      UserCredential userCredential =
-          await _auth.signInWithCredential(fbAuthCred);
+      // UserCredential userCredential =
+      //     await auth.signInWithCredential(fbAuthCred);
 
       // await saveToPrefs(userCredential);
 
-      print(userCredential);
+      // print(userCredential);
       // }
     } on FirebaseAuthException catch (e) {
       print(e);
@@ -54,27 +66,67 @@ class FirebaseAuthUtil {
           idToken: googleAuth?.idToken,
         );
 
-        UserCredential userCredential =
-            await _auth.signInWithCredential(credential);
+        User? user = (await auth.signInWithCredential(credential)).user;
 
-        await saveToPrefs(userCredential);
+        if (user != null) {
+          DocumentSnapshot result = await firebaseFirestore
+              .collection("user detail")
+              .doc(user.uid)
+              .get();
 
-        print("\n$userCredential");
+          if (result.exists) {
+            _userModel =
+                UserModel.fromMap(result.data() as Map<String, dynamic>);
+
+            await saveToPrefs(user);
+          } else {
+            _userModel = UserModel(
+              uid: user.uid,
+              email: user.email,
+              name: user.displayName,
+              photoUrl: user.photoURL,
+            );
+
+            await firebaseFirestore
+                .collection("user detail")
+                .doc(user.uid)
+                .set(_userModel?.toMap() ?? {})
+                .then((value) => print("new user created..."));
+
+            await firebaseFirestore.collection("location").doc(user.uid).set({
+              "lat": "",
+              "long": "",
+              "name": user.displayName,
+            }).then((value) => print("users list updated..."));
+
+            await firebaseFirestore
+                .collection("users")
+                .doc(user.uid)
+                .set(_userModel?.toMap() ?? {})
+                .then((value) => print("users list updated..."));
+
+            await saveToPrefs(user);
+          }
+        } else {
+          print("authentication error");
+        }
+
+        print("\n$user");
       }
     } on FirebaseAuthException catch (e) {
-      print(e);
+      print(e.code.toString());
     }
   }
 
-  Future<void> saveToPrefs(UserCredential userCredential) async {
-    final prefs = await SharedPreferences.getInstance();
+  Future<void> saveToPrefs(User user) async {
+    // final prefs = await SharedPreferences.getInstance();
 
     try {
-      await prefs.setString(uidKey, userCredential.user?.uid ?? "");
-      await prefs.setString(emailKey, userCredential.user?.email ?? "");
-      await prefs.setString(nameKey, userCredential.user?.displayName ?? "");
-      await prefs.setString(photoKey, userCredential.user?.photoURL ?? "");
-      await prefs.setString(phoneKey, userCredential.user?.phoneNumber ?? "");
+      await prefs.setString(uidKey, user.uid);
+      await prefs.setString(emailKey, user.email ?? "");
+      await prefs.setString(nameKey, user.displayName ?? "");
+      await prefs.setString(photoKey, user.photoURL ?? "");
+      await prefs.setString(phoneKey, user.phoneNumber ?? "");
     } on Exception catch (e) {
       print(e);
     }
@@ -83,9 +135,7 @@ class FirebaseAuthUtil {
   //SIGN OUT
   Future<void> signOut() async {
     try {
-      await _auth
-          .signOut()
-          .whenComplete(() => print("LOGGED OUT SUCCESSFULLY"));
+      await auth.signOut().whenComplete(() => print("LOGGED OUT SUCCESSFULLY"));
 
       // await _auth.currentUser?.delete().whenComplete(
       //     () => print("LOGGED OUT SUCCESSFULLY\nAND DELETED THE ACCOUNT"));
