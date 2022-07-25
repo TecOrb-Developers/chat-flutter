@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:new_project/constants.dart';
 import 'package:new_project/model/user_model.dart';
@@ -29,22 +30,24 @@ class FirebaseAuthUtil {
     try {
       // await signOut();
 
-      // final LoginResult loginResult = await FacebookAuth.instance.login();
+      final LoginResult loginResult = await FacebookAuth.instance.login();
 
-      // print("FB LOGIN RESULT STATUS: ${loginResult.status}");
-      // print("FB LOGIN RESULT MESSAGE: ${loginResult.message}");
+      print("FB LOGIN RESULT STATUS: ${loginResult.status}");
+      print("FB LOGIN RESULT MESSAGE: ${loginResult.message}");
 
-      // if (loginResult.accessToken?.token != null) {
-      // final OAuthCredential fbAuthCred =
-      //     FacebookAuthProvider.credential(loginResult.accessToken!.token);
+      if (loginResult.accessToken?.token != null) {
+        final OAuthCredential fbAuthCred =
+            FacebookAuthProvider.credential(loginResult.accessToken!.token);
 
-      // UserCredential userCredential =
-      //     await auth.signInWithCredential(fbAuthCred);
+        FacebookAuth.instance.getUserData();
 
-      // await saveToPrefs(userCredential);
+        UserCredential userCredential =
+            await auth.signInWithCredential(fbAuthCred);
 
-      // print(userCredential);
-      // }
+        await saveToPrefs(userCredential.user!);
+
+        print(userCredential);
+      }
     } on FirebaseAuthException catch (e) {
       print(e);
     }

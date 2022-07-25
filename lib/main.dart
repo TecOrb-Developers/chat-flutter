@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:new_project/constants.dart';
 import 'package:new_project/screens/NoInternetScreen.dart';
 import 'package:new_project/screens/onboarding_screen_1.dart';
 import 'package:new_project/screens/share_location_screen.dart';
@@ -42,7 +43,8 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
-          primarySwatch: Colors.blue,
+          colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue)
+              .copyWith(secondary: accentColor),
         ),
         home: const MyHomePage(),
         debugShowCheckedModeBanner: false,

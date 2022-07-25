@@ -46,6 +46,7 @@ dependencies:
   uuid: ^3.0.6
   google_maps_flutter: ^2.1.8
   geolocator: ^9.0.1
+  maps_launcher: ^2.0.1
   
 
 dev_dependencies:

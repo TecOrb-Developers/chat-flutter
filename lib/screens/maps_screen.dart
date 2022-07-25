@@ -8,6 +8,8 @@ import 'package:new_project/utils/firebase_auth_util.dart';
 import 'package:new_project/widgets/my_location_widget.dart';
 import 'package:provider/provider.dart';
 
+import '../utils/utils.dart';
+
 class MapsScreen extends StatelessWidget {
   MapsScreen({Key? key, required this.position}) : super(key: key);
 
@@ -177,60 +179,63 @@ class MapsScreen extends StatelessWidget {
                             if (snapshot.hasData) {
                               final docs = snapshot.data!.docs;
 
-                              return ListView.builder(
-                                  controller: scrollController,
-                                  itemCount: docs.length,
-                                  itemBuilder: (context, index) {
-                                    print(docs.length);
-                                    final DocumentSnapshot doc = docs[index];
+                              return ScrollConfiguration(
+                                behavior: Behaviour(),
+                                child: ListView.builder(
+                                    controller: scrollController,
+                                    itemCount: docs.length,
+                                    itemBuilder: (context, index) {
+                                      print(docs.length);
+                                      final DocumentSnapshot doc = docs[index];
 
-                                    Map<String, dynamic> tUser =
-                                        doc.data() as Map<String, dynamic>;
-                                    UserModel targetUser =
-                                        UserModel.fromMap(tUser);
+                                      Map<String, dynamic> tUser =
+                                          doc.data() as Map<String, dynamic>;
+                                      UserModel targetUser =
+                                          UserModel.fromMap(tUser);
 
-                                    if (doc["uid"] !=
-                                        context
-                                            .read<FirebaseAuthUtil>()
-                                            .currentUser!
-                                            .uid) {
-                                      return Column(
-                                        children: [
-                                          ListTile(
-                                            contentPadding:
-                                                const EdgeInsets.symmetric(
-                                                    horizontal: 20),
-                                            leading: CircleAvatar(
-                                              backgroundColor: primaryColor,
-                                              backgroundImage:
-                                                  NetworkImage(doc["photoUrl"]),
-                                              // child:
-                                              //     Image.network(doc["photoUrl"]),
-                                            ),
-                                            title: Text(doc["name"]),
-                                            subtitle: Text(doc["email"]),
-                                            onTap: () async {
-                                              Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                  builder: (_) =>
-                                                      UserLocationScreen(
-                                                    targetUser: targetUser,
+                                      if (doc["uid"] !=
+                                          context
+                                              .read<FirebaseAuthUtil>()
+                                              .currentUser!
+                                              .uid) {
+                                        return Column(
+                                          children: [
+                                            ListTile(
+                                              contentPadding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 20),
+                                              leading: CircleAvatar(
+                                                backgroundColor: primaryColor,
+                                                backgroundImage: NetworkImage(
+                                                    doc["photoUrl"]),
+                                                // child:
+                                                //     Image.network(doc["photoUrl"]),
+                                              ),
+                                              title: Text(doc["name"]),
+                                              subtitle: Text(doc["email"]),
+                                              onTap: () async {
+                                                Navigator.of(context).push(
+                                                  MaterialPageRoute(
+                                                    builder: (_) =>
+                                                        UserLocationScreen(
+                                                      targetUser: targetUser,
+                                                    ),
                                                   ),
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                          const Divider(
-                                            height: 0,
-                                            endIndent: 22,
-                                            indent: 22,
-                                          ),
-                                        ],
-                                      );
-                                    } else {
-                                      return const SizedBox.shrink();
-                                    }
-                                  });
+                                                );
+                                              },
+                                            ),
+                                            const Divider(
+                                              height: 0,
+                                              endIndent: 22,
+                                              indent: 22,
+                                            ),
+                                          ],
+                                        );
+                                      } else {
+                                        return const SizedBox.shrink();
+                                      }
+                                    }),
+                              );
                             }
                             return const Scaffold(
                               backgroundColor: Colors.white,

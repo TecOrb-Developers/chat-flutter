@@ -213,7 +213,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
     _textEditingController.clear();
 
-    widget.targetUser;
+    // widget.targetUser;
 
     if (message.isNotEmpty) {
       MessageModel messageModel = MessageModel(

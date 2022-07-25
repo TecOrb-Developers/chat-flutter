@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:maps_launcher/maps_launcher.dart';
 import 'package:new_project/constants.dart';
 import 'package:new_project/model/chat_room_model.dart';
 import 'package:new_project/model/user_model.dart';
@@ -38,7 +39,7 @@ class _UserLocationScreenState extends State<UserLocationScreen> {
 
     print(targetUser.uid);
 
-    ChatroomModel chatroomModel;
+    // ChatroomModel chatroomModel;
 
     QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection("chatrooms")
@@ -57,7 +58,7 @@ class _UserLocationScreenState extends State<UserLocationScreen> {
     } else {
       //CREATE NEW CHATROOM
       print("no chatroom found");
-      chatroomModel = ChatroomModel(
+      ChatroomModel? newChatRoom = ChatroomModel(
         chatroomId: UUID.uuid.v1(),
         lastMessage: "",
         participants: {
@@ -68,12 +69,12 @@ class _UserLocationScreenState extends State<UserLocationScreen> {
 
       await FirebaseFirestore.instance
           .collection("chatrooms")
-          .doc(chatroomModel.chatroomId)
-          .set(chatroomModel.toMap());
-
-      chatRoom = chatroomModel;
+          .doc(newChatRoom.chatroomId)
+          .set(newChatRoom.toMap());
 
       print("new chatroom created");
+
+      chatRoom = newChatRoom;
     }
     return chatRoom;
   }
@@ -145,7 +146,7 @@ class _UserLocationScreenState extends State<UserLocationScreen> {
                     zoomControlsEnabled: false,
                     initialCameraPosition: CameraPosition(
                       target: LatLng(lat, long),
-                      zoom: 16.66,
+                      zoom: 20,
                     ),
                     markers: {
                       Marker(
@@ -224,14 +225,21 @@ class _UserLocationScreenState extends State<UserLocationScreen> {
                     endIndent: 19,
                     indent: 19,
                   ),
-                  const ListTile(
-                    contentPadding: EdgeInsets.symmetric(horizontal: 20),
-                    leading: Icon(
+                  ListTile(
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+                    leading: const Icon(
                       Icons.directions,
                       color: Colors.grey,
                     ),
-                    title: Text("Get Directions"),
-                    subtitle: Text("100 miles away"),
+                    title: const Text("Get Directions"),
+                    subtitle: const Text("100 miles away"),
+                    onTap: () {
+                      String url = MapsLauncher.createCoordinatesUrl(lat, long);
+
+                      print(url);
+
+                      // MapsLauncher.launchCoordinates(lat, long);
+                    },
                   ),
                   const Spacer(flex: 2),
                 ],

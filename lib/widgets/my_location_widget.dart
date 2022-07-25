@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
 import '../constants.dart';
 
 class MyLocationWidget extends StatefulWidget {
@@ -28,8 +27,9 @@ class _MyLocationWidgetState extends State<MyLocationWidget> {
 
   late StreamSubscription<Position> positionStream;
 
+  double lat = 0.0, long = 0.0;
+
   /// Determine the current position of the device.
-  ///
   /// When the location services are not enabled or permissions
   /// are denied the `Future` will return an error.
   Future<Position> _determinePosition() async {
@@ -78,6 +78,8 @@ class _MyLocationWidgetState extends State<MyLocationWidget> {
     positionStream =
         Geolocator.getPositionStream(locationSettings: locationSettings)
             .listen((Position? position) {
+      lat = position?.latitude ?? 0.0;
+      long = position?.longitude ?? 0.0;
       print("latitude : ${position?.latitude.toString()}");
       print("longitude : ${position?.longitude.toString()}");
       FirebaseFirestore.instance
@@ -114,6 +116,15 @@ class _MyLocationWidgetState extends State<MyLocationWidget> {
               tilt: 10,
               zoom: 10,
             ),
+            markers: {
+              Marker(
+                markerId: const MarkerId("marker_id"),
+                icon: BitmapDescriptor.defaultMarkerWithHue(
+                    BitmapDescriptor.hueBlue),
+                position: LatLng(lat, long),
+                consumeTapEvents: false,
+              )
+            },
             compassEnabled: false,
             myLocationEnabled: true,
             myLocationButtonEnabled: false,
@@ -122,11 +133,10 @@ class _MyLocationWidgetState extends State<MyLocationWidget> {
               _completer.complete(controller);
               _gmapController = controller;
 
-              print("on map created called");
+              print("on map created...");
 
               _startStreaming();
             },
-            onCameraMove: (position) {},
           ),
           SafeArea(
               child: Padding(
@@ -217,7 +227,6 @@ class _MyLocationWidgetState extends State<MyLocationWidget> {
   //    } on Exception {
   //      currentLocation = null;
   //      }
-
   //   controller.animateCamera(CameraUpdate.newCameraPosition(
   //     CameraPosition(
   //       bearing: 0,

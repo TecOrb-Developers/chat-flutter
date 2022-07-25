@@ -3,6 +3,7 @@ import 'package:new_project/constants.dart';
 import 'package:new_project/screens/add_name_screen.dart';
 import 'package:new_project/screens/add_photo_screen.dart';
 import 'package:new_project/screens/share_location_screen.dart';
+import 'package:new_project/utils/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AddEmailScreen extends StatelessWidget {
@@ -56,6 +57,7 @@ class AddEmailScreen extends StatelessWidget {
                   fontSize: 22,
                 ),
                 cursorColor: yellowBtnColor,
+                maxLines: 1,
                 decoration: const InputDecoration(
                   border: InputBorder.none,
                   hintText: "abc@xyz.com",
@@ -64,12 +66,14 @@ class AddEmailScreen extends StatelessWidget {
                 validator: (value) {
                   // Check if this field is empty
                   if (value == null || value.isEmpty) {
-                    return 'This field is required';
+                    showSnackbar(context, "This is a required field");
+                    return "";
                   }
 
                   // using regular expression
                   if (!RegExp(r'\S+@\S+\.\S+').hasMatch(value)) {
-                    return "Please enter a valid email address";
+                    showSnackbar(context, "Please enter a valid email address");
+                    return "";
                   }
 
                   // the email is valid
