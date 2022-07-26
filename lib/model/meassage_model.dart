@@ -4,7 +4,8 @@ class MessageModel {
   String? senderEmail;
   String? receiverId;
   String? receiverEmail;
-  String? text;
+  String? message;
+  String? msgType;
   bool? seen;
   DateTime? createdon;
 
@@ -14,7 +15,8 @@ class MessageModel {
       this.senderEmail,
       this.receiverId,
       this.receiverEmail,
-      this.text,
+      this.message,
+      this.msgType,
       this.seen = false,
       this.createdon});
 
@@ -24,7 +26,8 @@ class MessageModel {
     senderEmail = map["senderEmail"];
     receiverId = map["receiverId"];
     receiverEmail = map["receiverEmail"];
-    text = map["text"];
+    message = map["message"];
+    msgType = map["msgType"];
     seen = map["seen"];
     createdon = map["createdon"].toDate();
   }
@@ -36,7 +39,8 @@ class MessageModel {
       "senderEmail": senderEmail,
       "receiverId": receiverId,
       "receiverEmail": receiverEmail,
-      "text": text,
+      "message": message,
+      "msgType": msgType,
       "seen": seen,
       "createdon": createdon
     };

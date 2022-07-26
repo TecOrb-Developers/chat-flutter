@@ -59,7 +59,18 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSCameraUsageDescription</key>
+	<string>To get gallery images for chat</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>To get images for chat</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>To capture audio for plugin</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+    	<string>comgooglemaps</string>
+    	<string>iosamap</string>
+	</array>
 </dict>
 </plist>

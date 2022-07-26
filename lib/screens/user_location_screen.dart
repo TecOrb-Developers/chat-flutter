@@ -1,8 +1,10 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:maps_launcher/maps_launcher.dart';
+import 'package:map_launcher/map_launcher.dart' as maps;
 import 'package:new_project/constants.dart';
 import 'package:new_project/model/chat_room_model.dart';
 import 'package:new_project/model/user_model.dart';
@@ -115,7 +117,7 @@ class _UserLocationScreenState extends State<UserLocationScreen> {
       body: Stack(
         children: [
           Container(
-            height: screenHeight * 0.65,
+            height: screenHeight * 0.73,
             width: double.maxFinite,
             color: Colors.white,
             child: StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
@@ -128,7 +130,7 @@ class _UserLocationScreenState extends State<UserLocationScreen> {
 
                 if (!snapshot.hasData) {
                   print("NO DATA FOUND");
-                  return const Center(child: Text("NO DATA FOUND"));
+                  return const Center(child: Text("LOADING..."));
                 } else if (snapshot.hasError) {
                   print("ERROR GETTING DATA");
                   return const Center(child: Text("ERROR GETTING DATA"));
@@ -171,7 +173,7 @@ class _UserLocationScreenState extends State<UserLocationScreen> {
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
-              height: screenHeight * 0.28,
+              height: screenHeight * 0.2,
               decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
@@ -182,7 +184,7 @@ class _UserLocationScreenState extends State<UserLocationScreen> {
               child: Column(
                 // mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Spacer(),
+                  // const Spacer(),
                   ListTile(
                     contentPadding: const EdgeInsets.symmetric(horizontal: 20),
                     leading: CircleAvatar(
@@ -232,16 +234,27 @@ class _UserLocationScreenState extends State<UserLocationScreen> {
                       color: Colors.grey,
                     ),
                     title: const Text("Get Directions"),
-                    subtitle: const Text("100 miles away"),
-                    onTap: () {
-                      String url = MapsLauncher.createCoordinatesUrl(lat, long);
-
-                      print(url);
-
-                      // MapsLauncher.launchCoordinates(lat, long);
+                    onTap: () async {
+                      if (Platform.isIOS) {
+                        if (await maps.MapLauncher.isMapAvailable(
+                                maps.MapType.google) ??
+                            false) {
+                          maps.MapLauncher.showDirections(
+                              mapType: maps.MapType.google,
+                              destination: maps.Coords(lat, long));
+                        } else {
+                          maps.MapLauncher.showDirections(
+                              mapType: maps.MapType.apple,
+                              destination: maps.Coords(lat, long));
+                        }
+                      } else {
+                        maps.MapLauncher.showDirections(
+                            mapType: maps.MapType.google,
+                            destination: maps.Coords(lat, long));
+                      }
                     },
                   ),
-                  const Spacer(flex: 2),
+                  const Spacer(flex: 3),
                 ],
               ),
             ),

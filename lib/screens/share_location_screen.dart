@@ -11,8 +11,8 @@ class ShareLocationScreen extends StatefulWidget {
 }
 
 class _ShareLocationScreenState extends State<ShareLocationScreen> {
-  late final Position position;
-  final bool _isLoading = false;
+  late final Position? position;
+  bool _isLoading = true;
 
   /// Determine the current position of the device.
   ///
@@ -56,7 +56,12 @@ class _ShareLocationScreenState extends State<ShareLocationScreen> {
         desiredAccuracy: LocationAccuracy.bestForNavigation);
   }
 
-  void getPosition() async => position = await _determinePosition();
+  void getPosition() async {
+    position = await _determinePosition();
+    setState(() {
+      _isLoading = false;
+    });
+  }
 
   @override
   void initState() {
@@ -100,14 +105,18 @@ class _ShareLocationScreenState extends State<ShareLocationScreen> {
             ),
             const Spacer(flex: 2),
             GestureDetector(
-              onTap: () {
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                    builder: (_) => MapsScreen(position: position),
-                  ),
-                  (route) => false,
-                );
-              },
+              onTap: _isLoading
+                  ? null
+                  : () {
+                      if (position != null) {
+                        Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                            builder: (_) => MapsScreen(position: position!),
+                          ),
+                          (route) => false,
+                        );
+                      }
+                    },
               child: Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 0,

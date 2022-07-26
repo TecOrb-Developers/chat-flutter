@@ -35,10 +35,10 @@ class MyApp extends StatelessWidget {
                   firebaseFirestore: firebaseFirestore,
                   prefs: prefs,
                 )),
-        // StreamProvider(
-        //   create: (_) => context.read<FirebaseAuthUtil>().authState,
-        //   initialData: null,
-        // ),
+        StreamProvider(
+          create: (_) => context.read<FirebaseAuthUtil>().authState,
+          initialData: null,
+        ),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',

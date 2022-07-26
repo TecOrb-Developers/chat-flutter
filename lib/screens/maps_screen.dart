@@ -7,7 +7,6 @@ import 'package:new_project/screens/user_location_screen.dart';
 import 'package:new_project/utils/firebase_auth_util.dart';
 import 'package:new_project/widgets/my_location_widget.dart';
 import 'package:provider/provider.dart';
-
 import '../utils/utils.dart';
 
 class MapsScreen extends StatelessWidget {
@@ -76,7 +75,7 @@ class MapsScreen extends StatelessWidget {
         children: [
           LayoutBuilder(builder: (context, constraints) {
             return Container(
-              height: constraints.maxHeight / 1.63,
+              height: constraints.maxHeight / 1.39,
               width: double.maxFinite,
               color: Colors.white,
               child: MyLocationWidget(
@@ -146,8 +145,8 @@ class MapsScreen extends StatelessWidget {
           ),
 
           DraggableScrollableSheet(
-            initialChildSize: 0.4,
-            minChildSize: 0.4,
+            initialChildSize: 0.3,
+            minChildSize: 0.3,
             maxChildSize: 0.85,
             snap: true,
             snapSizes: const [0.4, 0.85],

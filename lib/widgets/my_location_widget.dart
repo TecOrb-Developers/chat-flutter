@@ -107,114 +107,112 @@ class _MyLocationWidgetState extends State<MyLocationWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Stack(
-        children: [
-          GoogleMap(
-            initialCameraPosition: CameraPosition(
-              target: _initialLatLng,
-              tilt: 10,
-              zoom: 10,
-            ),
-            markers: {
-              Marker(
-                markerId: const MarkerId("marker_id"),
-                icon: BitmapDescriptor.defaultMarkerWithHue(
-                    BitmapDescriptor.hueBlue),
-                position: LatLng(lat, long),
-                consumeTapEvents: false,
-              )
-            },
-            compassEnabled: false,
-            myLocationEnabled: true,
-            myLocationButtonEnabled: false,
-            zoomControlsEnabled: false,
-            onMapCreated: (controller) {
-              _completer.complete(controller);
-              _gmapController = controller;
-
-              print("on map created...");
-
-              _startStreaming();
-            },
+    return Stack(
+      children: [
+        GoogleMap(
+          initialCameraPosition: CameraPosition(
+            target: _initialLatLng,
+            tilt: 10,
+            zoom: 10,
           ),
-          SafeArea(
-              child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Container(
+          markers: {
+            Marker(
+              markerId: const MarkerId("marker_id"),
+              icon: BitmapDescriptor.defaultMarkerWithHue(
+                  BitmapDescriptor.hueBlue),
+              position: LatLng(lat, long),
+              consumeTapEvents: false,
+            )
+          },
+          compassEnabled: false,
+          myLocationEnabled: true,
+          myLocationButtonEnabled: false,
+          zoomControlsEnabled: false,
+          onMapCreated: (controller) {
+            _completer.complete(controller);
+            _gmapController = controller;
+
+            print("on map created...");
+
+            _startStreaming();
+          },
+        ),
+        SafeArea(
+            child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: const BoxDecoration(
+                  color: Colors.transparent,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.menu,
+                  color: Colors.transparent,
+                  size: 22,
+                ),
+              ),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    print("search bar");
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 10),
+                    margin: const EdgeInsets.symmetric(horizontal: 10),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20)),
+                    child: const Text(
+                      "B - 52 sector 63, Noida",
+                      style: TextStyle(
+                        fontSize: 16,
+                        // fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              InkWell(
+                onTap: () async {
+                  print('my location button');
+                  final position = await Geolocator.getCurrentPosition(
+                    desiredAccuracy: LocationAccuracy.bestForNavigation,
+                  );
+                  print("got the position");
+                  _gmapController.animateCamera(
+                    CameraUpdate.newCameraPosition(
+                      CameraPosition(
+                        target: LatLng(position.latitude, position.longitude),
+                        tilt: 10,
+                        zoom: 17,
+                      ),
+                    ),
+                  );
+                  setState(() {});
+                  print("animate to my location");
+                },
+                child: Container(
                   padding: const EdgeInsets.all(6),
                   decoration: const BoxDecoration(
-                    color: Colors.transparent,
+                    color: primaryColor,
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
-                    Icons.menu,
-                    color: Colors.transparent,
+                    Icons.my_location_rounded,
+                    color: Colors.white,
                     size: 22,
                   ),
                 ),
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () {
-                      print("search bar");
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 10),
-                      margin: const EdgeInsets.symmetric(horizontal: 10),
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20)),
-                      child: const Text(
-                        "B - 52 sector 63, Noida",
-                        style: TextStyle(
-                          fontSize: 16,
-                          // fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                InkWell(
-                  onTap: () async {
-                    print('my location button');
-                    final position = await Geolocator.getCurrentPosition(
-                      desiredAccuracy: LocationAccuracy.bestForNavigation,
-                    );
-                    print("got the position");
-                    _gmapController.animateCamera(
-                      CameraUpdate.newCameraPosition(
-                        CameraPosition(
-                          target: LatLng(position.latitude, position.longitude),
-                          tilt: 10,
-                          zoom: 17,
-                        ),
-                      ),
-                    );
-                    setState(() {});
-                    print("animate to my location");
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: const BoxDecoration(
-                      color: primaryColor,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.my_location_rounded,
-                      color: Colors.white,
-                      size: 22,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          )),
-        ],
-      ),
+              ),
+            ],
+          ),
+        )),
+      ],
     );
   }
 
