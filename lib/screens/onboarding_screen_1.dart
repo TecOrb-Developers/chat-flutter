@@ -113,15 +113,25 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         margin: const EdgeInsets.symmetric(vertical: 50),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Text(
-                              "Already have an account? ",
+                          children: [
+                            const Text(
+                              "Already have an account?",
                               style: TextStyle(color: Colors.white),
                             ),
-                            Text("Sign In",
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (_) => const LoginScreen()),
+                                );
+                              },
+                              child: const Text(
+                                "Sign In",
                                 style: TextStyle(
                                     color: Colors.white,
-                                    fontWeight: FontWeight.bold)),
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
                           ],
                         ),
                       ),

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:map_launcher/map_launcher.dart' as maps;
 import 'package:new_project/constants.dart';
@@ -26,8 +27,11 @@ class UserLocationScreen extends StatefulWidget {
 class _UserLocationScreenState extends State<UserLocationScreen> {
   late GoogleMapController _gMapcontroller;
 
-  double lat = 0.0, long = 0.0;
+  double lat = 0.0, long = 0.0, distance = 0.0;
   bool _isMapCreated = false;
+  late Position myPosition;
+
+  final Set<Marker> _markers = {};
 
   Future<ChatroomModel?> getChatroomModel(
     UserModel targetUser,
@@ -126,21 +130,17 @@ class _UserLocationScreenState extends State<UserLocationScreen> {
                   .doc(widget.targetUser.uid)
                   .snapshots(),
               builder: (context, snapshot) {
-                if (_isMapCreated) updateCamera(lat: lat, long: long);
-
                 if (!snapshot.hasData) {
-                  print("NO DATA FOUND");
                   return const Center(child: Text("LOADING..."));
                 } else if (snapshot.hasError) {
-                  print("ERROR GETTING DATA");
                   return const Center(child: Text("ERROR GETTING DATA"));
                 } else {
                   final data = snapshot.data?.data() as Map<String, dynamic>;
 
-                  print("target lat: ${data["lat"]}");
-
                   lat = double.parse(data["lat"]);
                   long = double.parse(data["long"]);
+
+                  if (_isMapCreated) updateCamera(lat: lat, long: long);
 
                   return GoogleMap(
                     myLocationEnabled: false,
@@ -150,17 +150,28 @@ class _UserLocationScreenState extends State<UserLocationScreen> {
                       target: LatLng(lat, long),
                       zoom: 20,
                     ),
-                    markers: {
-                      Marker(
-                        markerId: const MarkerId("marker_id"),
-                        position: LatLng(lat, long),
-                      ),
-                    },
-                    onMapCreated: (controller) {
+                    markers: _markers,
+                    onMapCreated: (controller) async {
                       _gMapcontroller = controller;
+
+                      myPosition = await Geolocator.getCurrentPosition();
+
+                      distance = Geolocator.distanceBetween(
+                        myPosition.latitude,
+                        myPosition.longitude,
+                        lat,
+                        long,
+                      );
 
                       setState(() {
                         _isMapCreated = true;
+                        _markers.clear();
+                        _markers.add(
+                          Marker(
+                            markerId: const MarkerId("marker_id"),
+                            position: LatLng(lat, long),
+                          ),
+                        );
                       });
 
                       // updateCamera(lat: lat, long: long);
@@ -223,7 +234,8 @@ class _UserLocationScreenState extends State<UserLocationScreen> {
                     },
                   ),
                   const Divider(
-                    thickness: 0.5,
+                    height: 0,
+                    // thickness: 0.5,
                     endIndent: 19,
                     indent: 19,
                   ),
@@ -234,6 +246,9 @@ class _UserLocationScreenState extends State<UserLocationScreen> {
                       color: Colors.grey,
                     ),
                     title: const Text("Get Directions"),
+                    subtitle: Text(
+                      "${distance.toInt() * 0.001} km from ${widget.targetUser.name}",
+                    ),
                     onTap: () async {
                       if (Platform.isIOS) {
                         if (await maps.MapLauncher.isMapAvailable(
@@ -267,7 +282,7 @@ class _UserLocationScreenState extends State<UserLocationScreen> {
   Future<void> updateCamera({required double lat, required double long}) async {
     print("update camera function");
 
-    await _gMapcontroller.animateCamera(
+    _gMapcontroller.animateCamera(
       CameraUpdate.newCameraPosition(
         CameraPosition(
           target: LatLng(lat, long),
@@ -275,5 +290,23 @@ class _UserLocationScreenState extends State<UserLocationScreen> {
         ),
       ),
     );
+
+    _markers.clear();
+    _markers.add(
+      Marker(
+        markerId: const MarkerId("marker_id"),
+        position: LatLng(lat, long),
+      ),
+    );
+
+    // setState(() {
+    //   _markers.clear();
+    //   _markers.add(
+    //     Marker(
+    //       markerId: const MarkerId("marker_id"),
+    //       position: LatLng(lat, long),
+    //     ),
+    //   );
+    // });
   }
 }

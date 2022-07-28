@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:new_project/constants.dart';
 import 'package:new_project/model/user_model.dart';
+import 'package:new_project/screens/onboarding_screen_1.dart';
 import 'package:new_project/screens/user_location_screen.dart';
 import 'package:new_project/utils/firebase_auth_util.dart';
 import 'package:new_project/widgets/my_location_widget.dart';
@@ -58,7 +59,15 @@ class MapsScreen extends StatelessWidget {
                     style: TextStyle(color: tileTextColor, fontSize: 16),
                   ),
                   onTap: () async {
-                    await context.read<FirebaseAuthUtil>().signOut();
+                    bool isSignedout =
+                        await context.read<FirebaseAuthUtil>().signOut();
+
+                    if (isSignedout) {
+                      Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                              builder: (_) => const OnboardingScreen()),
+                          (route) => false);
+                    }
                   },
                   trailing: const Icon(
                     Icons.arrow_forward_ios_rounded,
@@ -99,6 +108,7 @@ class MapsScreen extends StatelessWidget {
                     },
                     child: Container(
                       padding: const EdgeInsets.all(6),
+                      margin: const EdgeInsets.only(top: 2.6),
                       decoration: const BoxDecoration(
                         color: primaryColor,
                         shape: BoxShape.circle,
@@ -110,35 +120,6 @@ class MapsScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // Expanded(
-                  //   child: Container(
-                  //     padding: const EdgeInsets.symmetric(
-                  //         horizontal: 16, vertical: 10),
-                  //     margin: const EdgeInsets.symmetric(horizontal: 10),
-                  //     decoration: const BoxDecoration(
-                  //       color: Colors.transparent,
-                  //     ),
-                  //     child: const Text(
-                  //       "",
-                  //       style: TextStyle(
-                  //         fontSize: 16,
-                  //         color: Colors.transparent,
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
-                  // Container(
-                  //   padding: const EdgeInsets.all(6),
-                  //   decoration: const BoxDecoration(
-                  //     color: Colors.transparent,
-                  //     shape: BoxShape.circle,
-                  //   ),
-                  //   child: const Icon(
-                  //     Icons.my_location_rounded,
-                  //     color: Colors.transparent,
-                  //     size: 22,
-                  //   ),
-                  // ),
                 ],
               ),
             ),
@@ -274,7 +255,16 @@ class MapsScreen extends StatelessWidget {
                 ),
               ),
             ),
-          )
+          ),
+          Visibility(
+            visible: context.watch<FirebaseAuthUtil>().hasLoggedOut,
+            child: Scaffold(
+              backgroundColor: Colors.grey[100],
+              body: const Center(
+                child: CircularProgressIndicator(color: primaryColor),
+              ),
+            ),
+          ),
         ],
       ),
     );

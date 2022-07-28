@@ -141,6 +141,8 @@ class _ChatScreenState extends State<ChatScreen> {
                                         ),
                                         child: Container(
                                           padding: const EdgeInsets.all(3),
+                                          margin: const EdgeInsets.symmetric(
+                                              vertical: 2, horizontal: 12),
                                           decoration: BoxDecoration(
                                             color: isSender
                                                 ? senderBoxColor
@@ -305,24 +307,28 @@ class _SendImagePageState extends State<SendImagePage> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-          backgroundColor: Colors.black,
-          elevation: 0,
-          leading: IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: const Icon(
-                Icons.arrow_back_outlined,
-                color: Colors.white,
-              ))),
+        backgroundColor: Colors.black,
+        elevation: 0,
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: const Icon(
+            Icons.arrow_back_outlined,
+            color: Colors.white,
+          ),
+        ),
+      ),
       body: Column(
         // mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          const Spacer(),
           if (image != null)
             Image.file(
               image!,
               height: 300,
             ),
+          const Spacer(flex: 2),
           if (image != null)
             GestureDetector(
               onTap: (image != null)
@@ -371,23 +377,23 @@ class _SendImagePageState extends State<SendImagePage> {
               child: Align(
                 alignment: Alignment.bottomCenter,
                 child: Container(
-                  height: 40,
+                  height: 35,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 0,
-                    vertical: 12,
+                    vertical: 8,
                   ),
                   margin:
                       const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
                   alignment: Alignment.center,
                   decoration: const ShapeDecoration(
-                    color: yellowBtnColor,
+                    color: primaryColor,
                     shape: StadiumBorder(),
                   ),
                   child: const Text(
                     "SEND",
                     style: TextStyle(
-                      color: primaryColor,
-                      fontSize: 21,
+                      color: Colors.white,
+                      fontSize: 16.5,
                     ),
                   ),
                 ),

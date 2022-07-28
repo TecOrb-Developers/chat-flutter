@@ -29,45 +29,7 @@ class _MyLocationWidgetState extends State<MyLocationWidget> {
 
   double lat = 0.0, long = 0.0;
 
-  /// Determine the current position of the device.
-  /// When the location services are not enabled or permissions
-  /// are denied the `Future` will return an error.
-  Future<Position> _determinePosition() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    // Test if location services are enabled.
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      // Location services are not enabled don't continue
-      // accessing the position and request users of the
-      // App to enable the location services.
-      return Future.error('Location services are disabled.');
-    }
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        // Permissions are denied, next time you could try
-        // requesting permissions again (this is also where
-        // Android's shouldShowRequestPermissionRationale
-        // returned true. According to Android guidelines
-        // your App should show an explanatory UI now.
-        return Future.error('Location permissions are denied');
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      // Permissions are denied forever, handle appropriately.
-      return Future.error(
-          'Location permissions are permanently denied, we cannot request permissions.');
-    }
-
-    // When we reach here, permissions are granted and we can
-    // continue accessing the position of the device.
-    return await Geolocator.getCurrentPosition();
-  }
+  final Set<Marker> _markers = {};
 
   void _startStreaming() {
     const LocationSettings locationSettings = LocationSettings(
@@ -80,8 +42,7 @@ class _MyLocationWidgetState extends State<MyLocationWidget> {
             .listen((Position? position) {
       lat = position?.latitude ?? 0.0;
       long = position?.longitude ?? 0.0;
-      print("latitude : ${position?.latitude.toString()}");
-      print("longitude : ${position?.longitude.toString()}");
+
       FirebaseFirestore.instance
           .collection("location")
           .doc(widget.user.uid)
@@ -89,17 +50,44 @@ class _MyLocationWidgetState extends State<MyLocationWidget> {
         "lat": position?.latitude.toString() ?? "",
         "long": position?.longitude.toString() ?? "",
       });
+
+      _updatePinOnMap();
+
       print(position == null
           ? 'Unknown'
           : 'stream positions: ${position.latitude.toString()}, ${position.longitude.toString()}');
     });
   }
 
+  void _updatePinOnMap() {
+    CameraPosition cameraPosition = CameraPosition(
+      zoom: 18,
+      tilt: 20,
+      target: LatLng(lat, long),
+    );
+
+    _gmapController.animateCamera(
+      CameraUpdate.newCameraPosition(cameraPosition),
+    );
+
+    setState(() {
+      _markers.clear();
+      _markers.add(Marker(
+        markerId: const MarkerId("marker_id"),
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+        position: LatLng(lat, long),
+        consumeTapEvents: false,
+      ));
+    });
+  }
+
   @override
   void initState() {
+    lat = widget.position.latitude;
+    long = widget.position.longitude;
     _initialLatLng = LatLng(
-      widget.position.latitude,
-      widget.position.longitude,
+      lat,
+      long,
     );
 
     super.initState();
@@ -115,15 +103,7 @@ class _MyLocationWidgetState extends State<MyLocationWidget> {
             tilt: 10,
             zoom: 10,
           ),
-          markers: {
-            Marker(
-              markerId: const MarkerId("marker_id"),
-              icon: BitmapDescriptor.defaultMarkerWithHue(
-                  BitmapDescriptor.hueBlue),
-              position: LatLng(lat, long),
-              consumeTapEvents: false,
-            )
-          },
+          markers: _markers,
           compassEnabled: false,
           myLocationEnabled: true,
           myLocationButtonEnabled: false,
@@ -134,7 +114,17 @@ class _MyLocationWidgetState extends State<MyLocationWidget> {
 
             print("on map created...");
 
-            _startStreaming();
+            setState(() {
+              _markers.clear();
+              _markers.add(Marker(
+                markerId: const MarkerId("marker_id"),
+                icon: BitmapDescriptor.defaultMarkerWithHue(
+                    BitmapDescriptor.hueBlue),
+                position: LatLng(lat, long),
+                consumeTapEvents: false,
+              ));
+              _startStreaming();
+            });
           },
         ),
         SafeArea(
@@ -189,7 +179,7 @@ class _MyLocationWidgetState extends State<MyLocationWidget> {
                       CameraPosition(
                         target: LatLng(position.latitude, position.longitude),
                         tilt: 10,
-                        zoom: 17,
+                        zoom: 18,
                       ),
                     ),
                   );

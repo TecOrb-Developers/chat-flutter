@@ -90,50 +90,50 @@ class _LoginScreenState extends State<LoginScreen> {
                                 //   MaterialPageRoute(
                                 //       builder: (_) => const AddEmailScreen()),
                                 // );
-                                await context
-                                    .read<FirebaseAuthUtil>()
-                                    .signInWithFb();
+                                // await context
+                                //     .read<FirebaseAuthUtil>()
+                                //     .signInWithFb();
 
-                                final SharedPreferences prefs =
-                                    await SharedPreferences.getInstance();
+                                // final SharedPreferences prefs =
+                                //     await SharedPreferences.getInstance();
 
-                                String email = prefs.getString(emailKey) ?? "";
-                                String name = prefs.getString(nameKey) ?? "";
-                                String photo = prefs.getString(photoKey) ?? "";
+                                // String email = prefs.getString(emailKey) ?? "";
+                                // String name = prefs.getString(nameKey) ?? "";
+                                // String photo = prefs.getString(photoKey) ?? "";
 
-                                if (email.isNotEmpty &&
-                                    name.isNotEmpty &&
-                                    photo.isNotEmpty) {
-                                  _toggleLoading();
-                                  Navigator.of(context).pushReplacement(
-                                    MaterialPageRoute(
-                                        builder: (_) =>
-                                            const ShareLocationScreen()),
-                                  );
-                                } else if (email.isEmpty) {
-                                  _toggleLoading();
+                                // if (email.isNotEmpty &&
+                                //     name.isNotEmpty &&
+                                //     photo.isNotEmpty) {
+                                //   _toggleLoading();
+                                //   Navigator.of(context).pushReplacement(
+                                //     MaterialPageRoute(
+                                //         builder: (_) =>
+                                //             const ShareLocationScreen()),
+                                //   );
+                                // } else if (email.isEmpty) {
+                                //   _toggleLoading();
 
-                                  Navigator.of(context).pushReplacement(
-                                    MaterialPageRoute(
-                                        builder: (_) => const AddEmailScreen()),
-                                  );
-                                } else {
-                                  if (name.isEmpty) {
-                                    _toggleLoading();
+                                //   Navigator.of(context).pushReplacement(
+                                //     MaterialPageRoute(
+                                //         builder: (_) => const AddEmailScreen()),
+                                //   );
+                                // } else {
+                                //   if (name.isEmpty) {
+                                //     _toggleLoading();
 
-                                    Navigator.of(context).pushReplacement(
-                                      MaterialPageRoute(
-                                          builder: (_) => AddNameScreen()),
-                                    );
-                                  } else if (photo.isEmpty) {
-                                    _toggleLoading();
-                                    Navigator.of(context).pushReplacement(
-                                      MaterialPageRoute(
-                                          builder: (_) =>
-                                              const AddPhotoScreen()),
-                                    );
-                                  }
-                                }
+                                //     Navigator.of(context).pushReplacement(
+                                //       MaterialPageRoute(
+                                //           builder: (_) => AddNameScreen()),
+                                //     );
+                                //   } else if (photo.isEmpty) {
+                                //     _toggleLoading();
+                                //     Navigator.of(context).pushReplacement(
+                                //       MaterialPageRoute(
+                                //           builder: (_) =>
+                                //               const AddPhotoScreen()),
+                                //     );
+                                //   }
+                                // }
                               },
                               child: Container(
                                 margin: const EdgeInsets.only(right: 1),

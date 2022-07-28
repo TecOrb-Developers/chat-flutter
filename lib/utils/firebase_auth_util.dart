@@ -25,6 +25,10 @@ class FirebaseAuthUtil {
 
   User? get currentUser => auth.currentUser;
 
+  bool _hasLoggedOut = false;
+
+  bool get hasLoggedOut => _hasLoggedOut;
+
   //LOGIN WITH FACEBOOK
   Future<void> signInWithFb() async {
     try {
@@ -136,14 +140,25 @@ class FirebaseAuthUtil {
   }
 
   //SIGN OUT
-  Future<void> signOut() async {
+  Future<bool> signOut() async {
+    _hasLoggedOut = true;
+    bool isClear = false;
     try {
-      await auth.signOut().whenComplete(() => print("LOGGED OUT SUCCESSFULLY"));
+      await auth.signOut().whenComplete(() async {
+        print("LOGGED OUT SUCCESSFULLY");
 
-      // await _auth.currentUser?.delete().whenComplete(
-      //     () => print("LOGGED OUT SUCCESSFULLY\nAND DELETED THE ACCOUNT"));
+        await GoogleSignIn()
+            .disconnect()
+            .then((value) => GoogleSignIn().signOut());
+
+        _hasLoggedOut = false;
+        isClear = await prefs.clear();
+      });
+      return isClear;
     } catch (e) {
+      _hasLoggedOut = false;
       print(e);
+      return isClear;
     }
   }
 }
