@@ -128,12 +128,16 @@ class FirebaseAuthUtil {
   Future<void> saveToPrefs(User user) async {
     // final prefs = await SharedPreferences.getInstance();
 
+    print("user image: ${user.photoURL}");
+
     try {
       await prefs.setString(uidKey, user.uid);
       await prefs.setString(emailKey, user.email ?? "");
       await prefs.setString(nameKey, user.displayName ?? "");
       await prefs.setString(photoKey, user.photoURL ?? "");
       await prefs.setString(phoneKey, user.phoneNumber ?? "");
+
+      print("pref image: ${prefs.getString(photoKey)}");
     } on Exception catch (e) {
       print(e);
     }
@@ -142,6 +146,7 @@ class FirebaseAuthUtil {
   //SIGN OUT
   Future<bool> signOut() async {
     _hasLoggedOut = true;
+
     bool isClear = false;
     try {
       await auth.signOut().whenComplete(() async {

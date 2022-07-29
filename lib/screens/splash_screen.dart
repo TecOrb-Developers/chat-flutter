@@ -4,7 +4,7 @@ import 'package:new_project/widgets/logo_widget.dart';
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({Key? key}) : super(key: key);
-  final int timer = 2200;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:new_project/constants.dart';
 import 'package:new_project/screens/login_screen.dart';
-
 import '../widgets/logo_widget.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -14,6 +13,11 @@ class OnboardingScreen extends StatefulWidget {
 class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _controller = PageController(initialPage: 0);
   int _index = 0;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +78,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       const SizedBox(height: 19),
-                      const LogoWidget(),
+                      const SizedBox(
+                        height: 150,
+                        width: 150,
+                      ),
                       const Spacer(),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -93,7 +100,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             vertical: 12,
                           ),
                           margin: const EdgeInsets.symmetric(
-                              horizontal: 25, vertical: 4),
+                              horizontal: 25, vertical: 0),
                           width: double.maxFinite,
                           alignment: Alignment.center,
                           decoration: const ShapeDecoration(
@@ -110,7 +117,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         ),
                       ),
                       Container(
-                        margin: const EdgeInsets.symmetric(vertical: 50),
+                        margin: const EdgeInsets.symmetric(vertical: 30),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -155,7 +162,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           duration: const Duration(milliseconds: 300),
           height: _index == i ? 8 : 6,
           width: _index == i ? 8 : 6,
-          margin: const EdgeInsets.symmetric(horizontal: 3, vertical: 25),
+          margin: const EdgeInsets.symmetric(horizontal: 3, vertical: 30),
           decoration: BoxDecoration(
             color: _index == i ? Colors.white : Colors.white70,
             shape: BoxShape.circle,
@@ -200,7 +207,7 @@ class FakeWidget extends StatelessWidget {
               ),
             ),
             Container(
-              margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 30),
+              margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 25),
               height: 8,
               color: Colors.transparent,
             ),

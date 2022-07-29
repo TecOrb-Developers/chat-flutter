@@ -10,16 +10,8 @@ class LogoWidget extends StatelessWidget {
     return Container(
       height: 150,
       width: 150,
-      color: Colors.indigo,
       alignment: Alignment.center,
-      child: const Text(
-        "LOGO",
-        style: TextStyle(
-          color: Colors.white,
-          // fontSize: 18,
-          // fontWeight: FontWeight.bold,
-        ),
-      ),
+      child: Image.asset("assets/images/splash_logo.jpeg"),
     );
   }
 }

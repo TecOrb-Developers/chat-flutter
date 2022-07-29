@@ -8,17 +8,37 @@ import 'package:new_project/screens/user_location_screen.dart';
 import 'package:new_project/utils/firebase_auth_util.dart';
 import 'package:new_project/widgets/my_location_widget.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../utils/utils.dart';
 
-class MapsScreen extends StatelessWidget {
-  MapsScreen({Key? key, required this.position}) : super(key: key);
+class MapsScreen extends StatefulWidget {
+  const MapsScreen({Key? key, required this.position}) : super(key: key);
 
   final Position position;
 
+  @override
+  State<MapsScreen> createState() => _MapsScreenState();
+}
+
+class _MapsScreenState extends State<MapsScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  final CollectionReference _collection = FirebaseFirestore.instance
-      .collection("user detail"); // previously used -> "users"
+  final CollectionReference _collection =
+      FirebaseFirestore.instance.collection("user detail");
+
+  // String _imageUrl = "";
+
+  // void setImage() async {
+  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   _imageUrl = prefs.getString(photoKey) ?? "";
+  // }
+
+  @override
+  void initState() {
+    // setImage();
+    // print("image: $_imageUrl");
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +59,7 @@ class MapsScreen extends StatelessWidget {
                     CircleAvatar(
                       backgroundColor: Colors.indigo,
                       radius: 32,
+                      // backgroundImage: NetworkImage(_imageUrl),
                     ),
                     Icon(
                       Icons.settings,
@@ -59,10 +80,9 @@ class MapsScreen extends StatelessWidget {
                     style: TextStyle(color: tileTextColor, fontSize: 16),
                   ),
                   onTap: () async {
-                    bool isSignedout =
-                        await context.read<FirebaseAuthUtil>().signOut();
+                    _scaffoldKey.currentState!.closeDrawer();
 
-                    if (isSignedout) {
+                    if (await context.read<FirebaseAuthUtil>().signOut()) {
                       Navigator.of(context).pushAndRemoveUntil(
                           MaterialPageRoute(
                               builder: (_) => const OnboardingScreen()),
@@ -88,7 +108,7 @@ class MapsScreen extends StatelessWidget {
               width: double.maxFinite,
               color: Colors.white,
               child: MyLocationWidget(
-                position: position,
+                position: widget.position,
                 user: context.read<FirebaseAuthUtil>().currentUser!,
               ),
             );
@@ -178,6 +198,57 @@ class MapsScreen extends StatelessWidget {
                                               .read<FirebaseAuthUtil>()
                                               .currentUser!
                                               .uid) {
+                                        if (index == 0) {
+                                          return Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              const Padding(
+                                                padding: EdgeInsets.only(
+                                                  left: 20,
+                                                  bottom: 10,
+                                                ),
+                                                child: Text(
+                                                  "People",
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w400,
+                                                    color: Colors.grey,
+                                                  ),
+                                                ),
+                                              ),
+                                              ListTile(
+                                                contentPadding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 20),
+                                                leading: CircleAvatar(
+                                                  backgroundColor: primaryColor,
+                                                  backgroundImage: NetworkImage(
+                                                      doc["photoUrl"]),
+                                                  // child:
+                                                  //     Image.network(doc["photoUrl"]),
+                                                ),
+                                                title: Text(doc["name"]),
+                                                subtitle: Text(doc["email"]),
+                                                onTap: () async {
+                                                  Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                      builder: (_) =>
+                                                          UserLocationScreen(
+                                                        targetUser: targetUser,
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                              const Divider(
+                                                height: 0,
+                                                endIndent: 22,
+                                                indent: 22,
+                                              ),
+                                            ],
+                                          );
+                                        }
                                         return Column(
                                           children: [
                                             ListTile(
@@ -259,7 +330,7 @@ class MapsScreen extends StatelessWidget {
           Visibility(
             visible: context.watch<FirebaseAuthUtil>().hasLoggedOut,
             child: Scaffold(
-              backgroundColor: Colors.grey[100],
+              backgroundColor: Colors.grey[50]!.withOpacity(0.2),
               body: const Center(
                 child: CircularProgressIndicator(color: primaryColor),
               ),

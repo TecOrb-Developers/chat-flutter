@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:new_project/constants.dart';
 import 'package:new_project/screens/NoInternetScreen.dart';
@@ -12,10 +13,20 @@ import 'package:new_project/utils/firebase_auth_util.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+Future<void> backgroundHandler(RemoteMessage message) async {
+  print(message.data.toString());
+  print(message.notification!.title);
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   SharedPreferences prefs = await SharedPreferences.getInstance();
+  // FirebaseMessaging.instance.getToken().then((value) => print(value));
+  FirebaseMessaging.onBackgroundMessage(backgroundHandler);
+
+  // final fcm = FCM();
+  // fcm.setNotifications();
   runApp(MyApp(prefs: prefs));
 }
 

@@ -140,7 +140,7 @@ class _ShareLocationScreenState extends State<ShareLocationScreen> {
                         ),
                       )
                     : const Text(
-                        "Continue",
+                        "Share",
                         style: TextStyle(
                           color: primaryColor,
                           fontSize: 18,

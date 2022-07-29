@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +25,7 @@ class UserLocationScreen extends StatefulWidget {
 
 class _UserLocationScreenState extends State<UserLocationScreen> {
   late GoogleMapController _gMapcontroller;
+  bool _isOpen = true;
 
   double lat = 0.0, long = 0.0, distance = 0.0;
   bool _isMapCreated = false;
@@ -207,21 +207,27 @@ class _UserLocationScreenState extends State<UserLocationScreen> {
                     subtitle: const Text("at Tecorb since 10:15"),
                     trailing: IconButton(
                       onPressed: () async {
-                        ChatroomModel? chatroomModel =
-                            await getChatroomModel(widget.targetUser, context);
-
-                        if (chatroomModel != null) {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => ChatScreen(
-                                chatroom: chatroomModel,
-                                firebaseUser: context
-                                    .read<FirebaseAuthUtil>()
-                                    .currentUser!,
-                                targetUser: widget.targetUser,
-                              ),
-                            ),
-                          );
+                        if (_isOpen) {
+                          _isOpen = false;
+                          await getChatroomModel(widget.targetUser, context)
+                              .then((chatroomModel) async {
+                            if (chatroomModel != null) {
+                              if (!mounted) return;
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => ChatScreen(
+                                    chatroom: chatroomModel,
+                                    firebaseUser: context
+                                        .read<FirebaseAuthUtil>()
+                                        .currentUser!,
+                                    targetUser: widget.targetUser,
+                                  ),
+                                ),
+                              );
+                              Future.delayed(const Duration(seconds: 1),
+                                  () => _isOpen = true);
+                            }
+                          });
                         }
                       },
                       icon: const Icon(
@@ -247,7 +253,7 @@ class _UserLocationScreenState extends State<UserLocationScreen> {
                     ),
                     title: const Text("Get Directions"),
                     subtitle: Text(
-                      "${distance.toInt() * 0.001} km from ${widget.targetUser.name}",
+                      "${(distance.toInt() * 0.001).toStringAsFixed(3)} km from ${widget.targetUser.name}",
                     ),
                     onTap: () async {
                       if (Platform.isIOS) {

@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:new_project/constants.dart';
-import 'package:new_project/screens/add_email_screen.dart';
 import 'package:new_project/screens/share_location_screen.dart';
 import 'package:new_project/utils/firebase_auth_util.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'add_name_screen.dart';
-import 'add_photo_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -196,30 +192,31 @@ class _LoginScreenState extends State<LoginScreen> {
                                         builder: (_) =>
                                             const ShareLocationScreen()),
                                   );
-                                } else if (email.isEmpty) {
-                                  _toggleLoading();
-
-                                  Navigator.of(context).pushReplacement(
-                                    MaterialPageRoute(
-                                        builder: (_) => const AddEmailScreen()),
-                                  );
-                                } else {
-                                  if (name.isEmpty) {
-                                    _toggleLoading();
-
-                                    Navigator.of(context).pushReplacement(
-                                      MaterialPageRoute(
-                                          builder: (_) => AddNameScreen()),
-                                    );
-                                  } else if (photo.isEmpty) {
-                                    _toggleLoading();
-                                    Navigator.of(context).pushReplacement(
-                                      MaterialPageRoute(
-                                          builder: (_) =>
-                                              const AddPhotoScreen()),
-                                    );
-                                  }
                                 }
+                                // else if (email.isEmpty) {
+                                //   _toggleLoading();
+
+                                //   Navigator.of(context).pushReplacement(
+                                //     MaterialPageRoute(
+                                //         builder: (_) => const AddEmailScreen()),
+                                //   );
+                                // } else {
+                                //   if (name.isEmpty) {
+                                //     _toggleLoading();
+
+                                //     Navigator.of(context).pushReplacement(
+                                //       MaterialPageRoute(
+                                //           builder: (_) => AddNameScreen()),
+                                //     );
+                                //   } else if (photo.isEmpty) {
+                                //     _toggleLoading();
+                                //     Navigator.of(context).pushReplacement(
+                                //       MaterialPageRoute(
+                                //           builder: (_) =>
+                                //               const AddPhotoScreen()),
+                                //     );
+                                //   }
+                                // }
                               },
                               child: Container(
                                 margin: const EdgeInsets.only(left: 1),

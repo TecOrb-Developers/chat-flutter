@@ -295,6 +295,7 @@ class SendImagePage extends StatefulWidget {
 }
 
 class _SendImagePageState extends State<SendImagePage> {
+  bool _isLoading = false;
   File? image;
   @override
   void initState() {
@@ -331,8 +332,11 @@ class _SendImagePageState extends State<SendImagePage> {
           const Spacer(flex: 2),
           if (image != null)
             GestureDetector(
-              onTap: (image != null)
+              onTap: (!_isLoading)
                   ? () async {
+                      setState(() {
+                        _isLoading = true;
+                      });
                       try {
                         print("send");
                         final cloudinary =
@@ -357,15 +361,22 @@ class _SendImagePageState extends State<SendImagePage> {
                               message: response.url.toString(),
                               msgType: "image");
 
-                          FirebaseFirestore.instance
+                          await FirebaseFirestore.instance
                               .collection("chatrooms")
                               .doc(widget.chatroom.chatroomId)
                               .collection("messages")
                               .doc(messageModel.messageid)
-                              .set(messageModel.toMap());
-                        }
+                              .set(messageModel.toMap())
+                              .then(
+                            (value) {
+                              setState(() {
+                                _isLoading = false;
+                              });
 
-                        Navigator.pop(context);
+                              Navigator.of(context).pop();
+                            },
+                          );
+                        }
                       } on CloudinaryException catch (e) {
                         print(e.message);
                       } on SocketException catch (e) {
@@ -389,16 +400,25 @@ class _SendImagePageState extends State<SendImagePage> {
                     color: primaryColor,
                     shape: StadiumBorder(),
                   ),
-                  child: const Text(
-                    "SEND",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16.5,
-                    ),
-                  ),
+                  child: _isLoading
+                      ? const SizedBox(
+                          height: 21,
+                          width: 21,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : const Text(
+                          "SEND",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16.5,
+                          ),
+                        ),
                 ),
               ),
-            )
+            ),
         ],
       ),
     );
