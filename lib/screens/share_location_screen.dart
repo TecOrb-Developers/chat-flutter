@@ -14,10 +14,10 @@ class _ShareLocationScreenState extends State<ShareLocationScreen> {
   late final Position? position;
   bool _isLoading = true;
 
-  /// Determine the current position of the device.
-  ///
-  /// When the location services are not enabled or permissions
-  /// are denied the `Future` will return an error.
+  // / Determine the current position of the device.
+  // /
+  // / When the location services are not enabled or permissions
+  // / are denied the `Future` will return an error.
   Future<Position> _determinePosition() async {
     bool serviceEnabled;
     LocationPermission permission;
@@ -56,8 +56,9 @@ class _ShareLocationScreenState extends State<ShareLocationScreen> {
         desiredAccuracy: LocationAccuracy.bestForNavigation);
   }
 
-  void getPosition() async {
+  void _getPosition() async {
     position = await _determinePosition();
+
     setState(() {
       _isLoading = false;
     });
@@ -65,7 +66,8 @@ class _ShareLocationScreenState extends State<ShareLocationScreen> {
 
   @override
   void initState() {
-    getPosition();
+    _getPosition();
+
     super.initState();
   }
 

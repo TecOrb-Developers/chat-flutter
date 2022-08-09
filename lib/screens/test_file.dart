@@ -8,21 +8,21 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../constants.dart';
 
-class MyLocationWidget extends StatefulWidget {
+class TestLocationWidget extends StatefulWidget {
   final Position position;
   final User user;
 
-  const MyLocationWidget({
+  const TestLocationWidget({
     Key? key,
     required this.user,
     required this.position,
   }) : super(key: key);
 
   @override
-  State<MyLocationWidget> createState() => _MyLocationWidgetState();
+  State<TestLocationWidget> createState() => _TestLocationWidgetState();
 }
 
-class _MyLocationWidgetState extends State<MyLocationWidget> {
+class _TestLocationWidgetState extends State<TestLocationWidget> {
   late final LatLng _initialLatLng;
   final Completer<GoogleMapController> _completer = Completer();
 
@@ -35,6 +35,11 @@ class _MyLocationWidgetState extends State<MyLocationWidget> {
   double lat = 0.0, long = 0.0;
 
   // final Set<Marker> _markers = {};
+
+  static const LocationSettings locationSettings = LocationSettings(
+    accuracy: LocationAccuracy.bestForNavigation,
+    distanceFilter: 10,
+  );
 
   void _startStreaming() {
     const LocationSettings locationSettings = LocationSettings(
@@ -74,6 +79,17 @@ class _MyLocationWidgetState extends State<MyLocationWidget> {
     });
   }
 
+  void updateLocationToFirebase(double lat, double long) {
+    FirebaseFirestore.instance
+        .collection("location")
+        .doc(widget.user.uid)
+        .update({
+      "lat": lat.toString(),
+      "long": long.toString(),
+    });
+    print("updating location to database");
+  }
+
   @override
   void initState() {
     lat = widget.position.latitude;
@@ -91,45 +107,59 @@ class _MyLocationWidgetState extends State<MyLocationWidget> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Animarker(
-          mapId: _completer.future.then<int>((value) => value.mapId),
-          useRotation: false,
-          duration: const Duration(milliseconds: 2300),
-          markers: {
-            Marker(
-              markerId: const MarkerId("marker_id"),
-              position: LatLng(lat, long),
-              draggable: false,
-              icon: BitmapDescriptor.defaultMarkerWithHue(
-                BitmapDescriptor.hueBlue,
-              ),
-            ),
-          },
-          child: GoogleMap(
-            initialCameraPosition: CameraPosition(
-              target: _initialLatLng,
-              tilt: 10,
-              zoom: 16,
-            ),
-            // markers: _markers,
-            compassEnabled: false,
-            myLocationEnabled: false,
-            myLocationButtonEnabled: false,
-            zoomControlsEnabled: false,
-            onMapCreated: (controller) async {
-              _completer.complete(controller);
-              _gmapController = controller;
+        StreamBuilder<Position>(
+            stream: Geolocator.getPositionStream(
+                locationSettings: locationSettings),
+            initialData: widget.position,
+            builder: (context, snapshot) {
+              Position pos = snapshot.data!;
 
-              _myLocationAddress = await _getAddressFromCoord(lat, long);
+              double latitude = pos.latitude;
+              double longitude = pos.longitude;
 
-              setState(() {});
+              updateLocationToFirebase(latitude, longitude);
 
-              _startStreaming();
+              return Animarker(
+                mapId: _completer.future.then<int>((value) => value.mapId),
+                useRotation: false,
+                duration: const Duration(milliseconds: 1111),
+                markers: {
+                  Marker(
+                    markerId: const MarkerId("marker_id"),
+                    position: LatLng(latitude, longitude),
+                    draggable: false,
+                    icon: BitmapDescriptor.defaultMarkerWithHue(
+                      BitmapDescriptor.hueBlue,
+                    ),
+                  ),
+                },
+                child: GoogleMap(
+                  initialCameraPosition: CameraPosition(
+                    target: _initialLatLng,
+                    tilt: 10,
+                    zoom: 16,
+                  ),
+                  // markers: _markers,
+                  compassEnabled: false,
+                  myLocationEnabled: false,
+                  myLocationButtonEnabled: false,
+                  zoomControlsEnabled: false,
+                  onMapCreated: (controller) async {
+                    _completer.complete(controller);
+                    _gmapController = controller;
 
-              print("on map created...");
-            },
-          ),
-        ),
+                    _myLocationAddress =
+                        await _getAddressFromCoord(latitude, longitude);
+
+                    setState(() {});
+
+                    // _startStreaming();
+
+                    print("on map created...");
+                  },
+                ),
+              );
+            }),
         SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

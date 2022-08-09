@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animarker/flutter_map_marker_animation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:map_launcher/map_launcher.dart' as maps;
@@ -24,14 +26,15 @@ class UserLocationScreen extends StatefulWidget {
 }
 
 class _UserLocationScreenState extends State<UserLocationScreen> {
+  final Completer<GoogleMapController> _completer = Completer();
   late GoogleMapController _gMapcontroller;
   bool _isOpen = true;
 
   double lat = 0.0, long = 0.0, distance = 0.0;
-  bool _isMapCreated = false;
+  // bool _isMapCreated = false;
   late Position myPosition;
 
-  final Set<Marker> _markers = {};
+  // final Set<Marker> _markers = {};
 
   Future<ChatroomModel?> getChatroomModel(
     UserModel targetUser,
@@ -130,6 +133,7 @@ class _UserLocationScreenState extends State<UserLocationScreen> {
                   .doc(widget.targetUser.uid)
                   .snapshots(),
               builder: (context, snapshot) {
+                print("snapshot builder");
                 if (!snapshot.hasData) {
                   return const Center(child: Text("LOADING..."));
                 } else if (snapshot.hasError) {
@@ -140,42 +144,53 @@ class _UserLocationScreenState extends State<UserLocationScreen> {
                   lat = double.parse(data["lat"]);
                   long = double.parse(data["long"]);
 
-                  if (_isMapCreated) updateCamera(lat: lat, long: long);
+                  // if (_isMapCreated) updateCamera(lat: lat, long: long);
 
-                  return GoogleMap(
-                    myLocationEnabled: false,
-                    myLocationButtonEnabled: false,
-                    zoomControlsEnabled: false,
-                    initialCameraPosition: CameraPosition(
-                      target: LatLng(lat, long),
-                      zoom: 20,
-                    ),
-                    markers: _markers,
-                    onMapCreated: (controller) async {
-                      _gMapcontroller = controller;
-
-                      myPosition = await Geolocator.getCurrentPosition();
-
-                      distance = Geolocator.distanceBetween(
-                        myPosition.latitude,
-                        myPosition.longitude,
-                        lat,
-                        long,
-                      );
-
-                      setState(() {
-                        _isMapCreated = true;
-                        _markers.clear();
-                        _markers.add(
-                          Marker(
-                            markerId: const MarkerId("marker_id"),
-                            position: LatLng(lat, long),
-                          ),
-                        );
-                      });
-
-                      // updateCamera(lat: lat, long: long);
+                  return Animarker(
+                    mapId: _completer.future.then<int>((value) => value.mapId),
+                    markers: {
+                      Marker(
+                        markerId: const MarkerId("marker_id"),
+                        position: LatLng(lat, long),
+                        draggable: false,
+                      ),
                     },
+                    child: GoogleMap(
+                      myLocationEnabled: false,
+                      myLocationButtonEnabled: false,
+                      zoomControlsEnabled: false,
+                      initialCameraPosition: CameraPosition(
+                        target: LatLng(lat, long),
+                        zoom: 20,
+                      ),
+                      // markers: _markers,
+                      onMapCreated: (controller) async {
+                        _completer.complete(controller);
+                        _gMapcontroller = controller;
+
+                        myPosition = await Geolocator.getCurrentPosition();
+
+                        distance = Geolocator.distanceBetween(
+                          myPosition.latitude,
+                          myPosition.longitude,
+                          lat,
+                          long,
+                        );
+
+                        setState(() {
+                          // _isMapCreated = true;
+                          // _markers.clear();
+                          // _markers.add(
+                          //   Marker(
+                          //     markerId: const MarkerId("marker_id"),
+                          //     position: LatLng(lat, long),
+                          //   ),
+                          // );
+                        });
+
+                        // updateCamera(lat: lat, long: long);
+                      },
+                    ),
                   );
                 }
               },
@@ -297,22 +312,14 @@ class _UserLocationScreenState extends State<UserLocationScreen> {
       ),
     );
 
-    _markers.clear();
-    _markers.add(
-      Marker(
-        markerId: const MarkerId("marker_id"),
-        position: LatLng(lat, long),
-      ),
-    );
+    // _markers.clear();
+    // _markers.add(
+    //   Marker(
+    //     markerId: const MarkerId("marker_id"),
+    //     position: LatLng(lat, long),
+    //   ),
+    // );
 
-    // setState(() {
-    //   _markers.clear();
-    //   _markers.add(
-    //     Marker(
-    //       markerId: const MarkerId("marker_id"),
-    //       position: LatLng(lat, long),
-    //     ),
-    //   );
-    // });
+    // setState(() {});  //PENDING: another test to be done without set state...
   }
 }
