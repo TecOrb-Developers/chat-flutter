@@ -4,9 +4,9 @@ import 'package:geolocator/geolocator.dart';
 import 'package:new_project/constants.dart';
 import 'package:new_project/model/user_model.dart';
 import 'package:new_project/screens/onboarding_screen_1.dart';
-import 'package:new_project/screens/test_file.dart';
 import 'package:new_project/screens/user_location_screen.dart';
 import 'package:new_project/utils/firebase_auth_util.dart';
+import 'package:new_project/widgets/my_location_widget.dart';
 import 'package:provider/provider.dart';
 import '../utils/utils.dart';
 
@@ -92,7 +92,7 @@ class _MapsScreenState extends State<MapsScreen> {
               height: constraints.maxHeight / 1.39,
               width: double.maxFinite,
               color: Colors.white,
-              child: TestLocationWidget(
+              child: MyLocationWidget(
                 position: widget.position,
                 user: context.read<FirebaseAuthUtil>().currentUser!,
               ),
